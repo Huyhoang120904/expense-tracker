@@ -1,0 +1,861 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Personal Expense Tracker API",
+    "version": "0.1.0",
+    "description": "Draft contract for ledger CRUD and reporting. Replace the example server URLs with the deployed Worker URLs."
+  },
+  "servers": [
+    {
+      "url": "https://ledger.example.com",
+      "description": "Integration Worker"
+    }
+  ],
+  "security": [
+    {
+      "BearerKey": []
+    }
+  ],
+  "paths": {
+    "/v1/categories": {
+      "get": {
+        "operationId": "listCategories",
+        "summary": "List ledger categories",
+        "x-required-scope": "transactions:read",
+        "description": "Includes archived categories for historical labels. Use active categories when creating a transaction.",
+        "responses": {
+          "200": {
+            "description": "Categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "items"
+                  ],
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Category" }
+                    }
+                  }
+                },
+                "example": {
+                  "items": [
+                    {
+                      "id": "food",
+                      "name": "Food",
+                      "archived": false
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      }
+    },
+    "/v1/transactions": {
+      "post": {
+        "operationId": "createTransaction",
+        "summary": "Create a ledger transaction",
+        "x-required-scope": "transactions:create",
+        "parameters": [
+          { "$ref": "#/components/parameters/IdempotencyKey" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateTransaction" },
+              "example": {
+                "transaction_date": "2026-11-17",
+                "type": "expense",
+                "amount_minor": 45000,
+                "currency_code": "VND",
+                "category_id": "food",
+                "merchant": "Highlands Coffee",
+                "note": "Lunch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Identical replay with the original ID",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TransactionId" },
+                "example": {
+                  "id": "txn_example"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TransactionId" },
+                "example": {
+                  "id": "txn_example"
+                }
+              }
+            },
+            "headers": {
+              "Location": {
+                "description": "Relative URL of the created row. Reading it requires read access.",
+                "schema": {
+                  "type": "string",
+                  "example": "/v1/transactions/txn_example"
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "409": { "$ref": "#/components/responses/Conflict" },
+          "415": { "$ref": "#/components/responses/UnsupportedMediaType" },
+          "422": { "$ref": "#/components/responses/ValidationError" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      },
+      "get": {
+        "operationId": "listTransactions",
+        "summary": "List active transactions",
+        "x-required-scope": "transactions:read",
+        "description": "Orders by transaction_date descending and then id descending. Omit month to list across months. Filters are combined. Use the same filters with the next cursor.",
+        "parameters": [
+          { "$ref": "#/components/parameters/OptionalMonth" },
+          { "$ref": "#/components/parameters/CategoryId" },
+          { "$ref": "#/components/parameters/TransactionType" },
+          { "$ref": "#/components/parameters/Limit" },
+          { "$ref": "#/components/parameters/Cursor" }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of transactions",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TransactionPage" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      }
+    },
+    "/v1/transactions/{id}": {
+      "parameters": [
+        { "$ref": "#/components/parameters/Id" }
+      ],
+      "get": {
+        "operationId": "getTransaction",
+        "summary": "Get an active transaction",
+        "x-required-scope": "transactions:read",
+        "responses": {
+          "200": {
+            "description": "Transaction",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Transaction" },
+                "example": {
+                  "id": "txn_example",
+                  "transaction_date": "2026-11-17",
+                  "type": "expense",
+                  "amount_minor": 45000,
+                  "currency_code": "VND",
+                  "category_id": "food",
+                  "merchant": "Highlands Coffee",
+                  "note": "Lunch",
+                  "source": "agent",
+                  "created_at": "2026-11-17T05:30:00Z",
+                  "updated_at": "2026-11-17T05:30:00Z"
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      },
+      "patch": {
+        "operationId": "updateTransaction",
+        "summary": "Edit an active transaction",
+        "servers": [
+          {
+            "url": "https://dashboard.example.com",
+            "description": "Dashboard Worker, behind Cloudflare Access"
+          }
+        ],
+        "security": [
+          {
+            "OwnerSession": []
+          }
+        ],
+        "description": "Send at least one field. Omitted fields retain their values. Use null to clear a category, merchant, or note. A category assignment must be active unless it is the transaction's existing category.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateTransaction" },
+              "example": {
+                "note": "Lunch with a friend"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated transaction",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Transaction" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "415": { "$ref": "#/components/responses/UnsupportedMediaType" },
+          "422": { "$ref": "#/components/responses/ValidationError" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      },
+      "delete": {
+        "operationId": "deleteTransaction",
+        "summary": "Soft-delete a transaction",
+        "servers": [
+          {
+            "url": "https://dashboard.example.com",
+            "description": "Dashboard Worker, behind Cloudflare Access"
+          }
+        ],
+        "security": [
+          {
+            "OwnerSession": []
+          }
+        ],
+        "description": "A repeated delete of an already deleted transaction returns 204. An unknown ID returns 404.",
+        "responses": {
+          "204": {
+            "description": "Deleted or already deleted"
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      }
+    },
+    "/v1/summary": {
+      "get": {
+        "operationId": "getMonthlySummary",
+        "summary": "Get monthly income and spending",
+        "x-required-scope": "transactions:read",
+        "parameters": [
+          { "$ref": "#/components/parameters/RequiredMonth" }
+        ],
+        "description": "Uses active rows by local transaction date. Refunds reduce spending in their posting month. Transfers contribute zero. The category breakdown covers expenses and refunds and includes an uncategorized bucket when needed.",
+        "responses": {
+          "200": {
+            "description": "Monthly totals",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MonthlySummary" },
+                "example": {
+                  "month": "2026-11",
+                  "currency_code": "VND",
+                  "income_minor": 15000000,
+                  "gross_expenses_minor": 45000,
+                  "refunds_minor": 0,
+                  "net_spending_minor": 45000,
+                  "remaining_minor": 14955000,
+                  "by_category": [
+                    {
+                      "category_id": "food",
+                      "gross_expenses_minor": 45000,
+                      "refunds_minor": 0,
+                      "net_spending_minor": 45000
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerKey": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Scoped expense tracker API key."
+      },
+      "OwnerSession": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "CF_Authorization",
+        "description": "Cloudflare Access session for the owner. Owner mutations also require a same-origin browser request. Access can redirect to sign-in before the Worker runs."
+      }
+    },
+    "parameters": {
+      "Id": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      },
+      "OptionalMonth": {
+        "name": "month",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$",
+          "example": "2026-11"
+        }
+      },
+      "RequiredMonth": {
+        "name": "month",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$",
+          "example": "2026-11"
+        }
+      },
+      "CategoryId": {
+        "name": "category_id",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      },
+      "TransactionType": {
+        "name": "type",
+        "in": "query",
+        "schema": { "$ref": "#/components/schemas/TransactionType" }
+      },
+      "Limit": {
+        "name": "limit",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 50
+        }
+      },
+      "Cursor": {
+        "name": "cursor",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        }
+      },
+      "IdempotencyKey": {
+        "name": "Idempotency-Key",
+        "in": "header",
+        "required": true,
+        "description": "Unique within the client for one logical create request. Reuse the same key and normalized payload on retry.",
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9._:-]+$"
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Bad request",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" },
+            "example": {
+              "error": {
+                "code": "invalid_request",
+                "message": "The request is malformed."
+              }
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Missing or invalid credentials",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" },
+            "example": {
+              "error": {
+                "code": "unauthorized",
+                "message": "A valid credential is required."
+              }
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Credential lacks permission",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" },
+            "example": {
+              "error": {
+                "code": "forbidden",
+                "message": "This credential cannot perform the requested operation."
+              }
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Transaction not found",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" },
+            "example": {
+              "error": {
+                "code": "not_found",
+                "message": "The transaction is unavailable."
+              }
+            }
+          }
+        }
+      },
+      "Conflict": {
+        "description": "Idempotency key was used for a different create payload",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" },
+            "example": {
+              "error": {
+                "code": "idempotency_conflict",
+                "message": "Use a new key for a different transaction."
+              }
+            }
+          }
+        }
+      },
+      "UnsupportedMediaType": {
+        "description": "Content type must be application/json",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" },
+            "example": {
+              "error": {
+                "code": "unsupported_media_type",
+                "message": "Send the request as application/json."
+              }
+            }
+          }
+        }
+      },
+      "ValidationError": {
+        "description": "Transaction fields failed validation",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" },
+            "example": {
+              "error": {
+                "code": "validation_error",
+                "message": "One or more transaction fields are invalid."
+              }
+            }
+          }
+        }
+      },
+      "InternalError": {
+        "description": "Unexpected error",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" },
+            "example": {
+              "error": {
+                "code": "internal_error",
+                "message": "The request could not be completed."
+              }
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "TransactionType": {
+        "type": "string",
+        "enum": [
+          "expense",
+          "income",
+          "transfer",
+          "refund"
+        ]
+      },
+      "TransactionId": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          }
+        }
+      },
+      "Category": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "archived"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "name": {
+            "type": "string"
+          },
+          "archived": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CreateTransaction": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "transaction_date",
+          "type",
+          "amount_minor",
+          "currency_code"
+        ],
+        "properties": {
+          "transaction_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "type": { "$ref": "#/components/schemas/TransactionType" },
+          "amount_minor": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "currency_code": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$"
+          },
+          "category_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "merchant": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 200
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2000
+          }
+        }
+      },
+      "UpdateTransaction": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "transaction_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "type": { "$ref": "#/components/schemas/TransactionType" },
+          "amount_minor": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "category_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "merchant": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 200
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2000
+          }
+        },
+        "minProperties": 1
+      },
+      "Transaction": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "transaction_date",
+          "type",
+          "amount_minor",
+          "currency_code",
+          "category_id",
+          "merchant",
+          "note",
+          "source",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "transaction_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "type": { "$ref": "#/components/schemas/TransactionType" },
+          "amount_minor": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "currency_code": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$"
+          },
+          "category_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "merchant": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 200
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2000
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "agent",
+              "telegram",
+              "dashboard"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TransactionPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Transaction" }
+          },
+          "next_cursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "CategorySpending": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "category_id",
+          "gross_expenses_minor",
+          "refunds_minor",
+          "net_spending_minor"
+        ],
+        "properties": {
+          "category_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "gross_expenses_minor": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "refunds_minor": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "net_spending_minor": {
+            "type": "integer"
+          }
+        }
+      },
+      "MonthlySummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "month",
+          "currency_code",
+          "income_minor",
+          "gross_expenses_minor",
+          "refunds_minor",
+          "net_spending_minor",
+          "remaining_minor",
+          "by_category"
+        ],
+        "properties": {
+          "month": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$",
+            "example": "2026-11"
+          },
+          "currency_code": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$"
+          },
+          "income_minor": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "gross_expenses_minor": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "refunds_minor": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "net_spending_minor": {
+            "type": "integer"
+          },
+          "remaining_minor": {
+            "type": "integer"
+          },
+          "by_category": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CategorySpending" }
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "invalid_request",
+                  "unauthorized",
+                  "forbidden",
+                  "not_found",
+                  "idempotency_conflict",
+                  "unsupported_media_type",
+                  "validation_error",
+                  "internal_error"
+                ]
+              },
+              "message": {
+                "type": "string"
+              },
+              "fields": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
