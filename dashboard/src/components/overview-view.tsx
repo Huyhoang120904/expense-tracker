@@ -174,7 +174,7 @@ export function OverviewView({
                 aria-hidden="true"
                 className="m-0 font-mono text-[13px] leading-[1.35] text-[var(--muted)]"
               >
-                {"$ tally init\n> chưa có giao dịch nào\n> đang chờ"}
+                {"> sổ tháng này\n> chưa có giao dịch nào\n> đang chờ"}
                 <span className="tally-cursor">█</span>
               </pre>
 

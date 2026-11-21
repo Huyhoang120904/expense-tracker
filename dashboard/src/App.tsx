@@ -31,6 +31,9 @@ import {
 import { useTheme } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
+const APP_NAME = "Sổ Thu Chi";
+const appIconUrl = new URL("./assets/so-thu-chi.png", import.meta.url).href;
+
 export type NavView = "overview" | "ledger" | "budgets" | "reports" | "settings";
 export type ToastTone = "success" | "warn" | "error";
 
@@ -230,7 +233,9 @@ export default function App() {
     "bảng điều khiển";
 
   useEffect(() => {
-    document.title = `tally – ${activeNavLabel}`;
+    const viewTitle =
+      activeNavLabel.charAt(0).toUpperCase() + activeNavLabel.slice(1);
+    document.title = `${APP_NAME} – ${viewTitle}`;
   }, [activeNavLabel]);
 
   const recentMerchants = useMemo(() => {
@@ -451,13 +456,17 @@ export default function App() {
             <button
               type="button"
               onClick={() => setActiveView("overview")}
-              aria-label="tally – bảng điều khiển"
-              className="inline-flex cursor-pointer items-center px-2.5 text-left text-[18px] font-semibold tracking-[-0.01em] text-[var(--text)]"
+              aria-label={`${APP_NAME} – Bảng điều khiển`}
+              className="inline-flex cursor-pointer items-center gap-2 px-2.5 text-left text-[18px] font-semibold tracking-[-0.01em] text-[var(--text)]"
             >
-              tally
-              <span className="text-[var(--accent)]" aria-hidden="true">
-                █
-              </span>
+              <img
+                src={appIconUrl}
+                alt=""
+                width={24}
+                height={24}
+                className="shrink-0"
+              />
+              {APP_NAME}
             </button>
 
             <div className="flex items-center gap-2 px-2.5 text-[12px] text-[var(--muted)] md:hidden">
