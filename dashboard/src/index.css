@@ -1,0 +1,543 @@
+@import "tailwindcss";
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, .dark, .dark *));
+
+:root,
+[data-theme="dark"] {
+  --bg: #0a0a0a;
+  --panel: #141414;
+  --panel2: #1c1c1c;
+  --border: #2f2f2f;
+  --bstrong: #4a4a4a;
+  --text: #eeeeee;
+  --muted: #8f8f8f;
+  --accent: #fab283;
+  --on-accent: #0a0a0a;
+  --blue: #5c9cf5;
+  --green: #7fd88f;
+  --purple: #9d7cd8;
+  --red: #e06c75;
+  --warn: #f5a742;
+  --cyan: #56b6c2;
+  --pink: #d98fb8;
+  --cat7: #c4c4c4;
+  --fill: #b9b9b9;
+  --radius: 2px;
+}
+
+[data-theme="light"] {
+  --bg: #fbfaf8;
+  --panel: #f3f1ed;
+  --panel2: #eae7e1;
+  --border: #d9d5cd;
+  --bstrong: #aaa59b;
+  --text: #1c1b1a;
+  --muted: #66625c;
+  --accent: #b45309;
+  --on-accent: #ffffff;
+  --blue: #1d5fd1;
+  --green: #1a7f37;
+  --purple: #6e4bc4;
+  --red: #c1303d;
+  --warn: #9a5b00;
+  --cyan: #0e7490;
+  --pink: #a8326f;
+  --cat7: #6b6760;
+  --fill: #55524c;
+}
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --color-card: var(--bg);
+  --color-card-foreground: var(--text);
+  --color-popover: var(--panel);
+  --color-popover-foreground: var(--text);
+  --color-primary: var(--accent);
+  --color-primary-foreground: var(--on-accent);
+  --color-secondary: var(--panel);
+  --color-secondary-foreground: var(--text);
+  --color-muted: var(--panel2);
+  --color-muted-foreground: var(--muted);
+  --color-accent: var(--panel2);
+  --color-accent-foreground: var(--text);
+  --color-destructive: var(--red);
+  --color-destructive-foreground: var(--on-accent);
+  --color-border: var(--border);
+  --color-input: var(--bstrong);
+  --color-ring: var(--blue);
+  --radius: 2px;
+  --radius-sm: 0px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
+  --font-sans: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    border-color: var(--border);
+  }
+
+  html {
+    background-color: var(--bg);
+    color: var(--text);
+  }
+
+  body {
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  svg text {
+    font-family: inherit;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+  }
+}
+
+@keyframes tally-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes tally-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0.15;
+  }
+}
+
+@layer components {
+  .tally-pane {
+    position: relative;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    padding: 24px 18px 18px;
+    min-width: 0;
+    border-radius: 0;
+  }
+
+  .tally-pt {
+    position: absolute;
+    top: -10px;
+    left: 12px;
+    background: var(--bg);
+    padding: 0 8px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.4;
+  }
+
+  .tally-btn {
+    font: inherit;
+    color: var(--text);
+    background: transparent;
+    border: 1px solid var(--bstrong);
+    padding: 0 14px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    border-radius: 2px;
+    white-space: nowrap;
+    transition: background-color 120ms ease, border-color 120ms ease, filter 120ms ease;
+  }
+
+  .tally-btn:hover:not(:disabled) {
+    background: var(--panel2);
+  }
+
+  .tally-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .tally-btn[aria-pressed="true"] {
+    border-color: var(--accent);
+    background: var(--panel);
+  }
+
+  .tally-btn-primary {
+    background: var(--accent);
+    color: var(--on-accent);
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+
+  .tally-btn-primary:hover:not(:disabled) {
+    background: var(--accent);
+    filter: brightness(1.08);
+  }
+
+  .tally-btn-sm {
+    height: 30px;
+    padding: 0 10px;
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .tally-kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    font-size: 11px;
+    border: 1px solid var(--bstrong);
+    padding: 0 5px;
+    border-radius: 2px;
+    color: var(--muted);
+    line-height: 18px;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
+  .tally-btn-primary .tally-kbd,
+  [data-slot="button"][data-variant="default"] .tally-kbd {
+    color: var(--on-accent);
+    border-color: var(--on-accent);
+  }
+
+  .tally-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 40px;
+    padding: 0 10px;
+    color: var(--muted);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
+  }
+
+  .tally-nav:hover {
+    color: var(--text);
+    background: var(--panel);
+  }
+
+  .tally-nav[aria-current="page"],
+  .tally-nav.is-active {
+    color: var(--text);
+    background: var(--panel);
+    border-left-color: var(--accent);
+  }
+
+  .tally-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    border: 1px solid var(--bstrong);
+    padding: 0 10px;
+    border-radius: 2px;
+    background: transparent;
+  }
+
+  .tally-search:focus-within {
+    border-color: var(--blue);
+  }
+
+  .tally-search input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: 0;
+    outline: 0;
+    color: var(--text);
+    font: inherit;
+  }
+
+  .tally-search input::placeholder {
+    color: var(--muted);
+  }
+
+  .tally-seg {
+    display: inline-flex;
+    align-items: stretch;
+    border: 1px solid var(--bstrong);
+    border-radius: 2px;
+    background: transparent;
+  }
+
+  .tally-seg-btn {
+    font: inherit;
+    color: var(--muted);
+    background: transparent;
+    border: 0;
+    height: 32px;
+    padding: 0 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    white-space: nowrap;
+    transition: background-color 120ms ease, color 120ms ease;
+  }
+
+  .tally-seg-btn:hover:not(:disabled) {
+    color: var(--text);
+  }
+
+  .tally-seg-btn[aria-pressed="true"],
+  .tally-seg-btn[data-state="active"] {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .tally-seg-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .tally-bar {
+    position: relative;
+    height: 8px;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 0;
+  }
+
+  .tally-bar-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    transition: width 200ms ease;
+  }
+
+  .tally-bar-fill.is-ok {
+    background: var(--fill);
+  }
+
+  .tally-bar-fill.is-warn {
+    background: var(--warn);
+  }
+
+  .tally-bar-fill.is-over {
+    background: repeating-linear-gradient(
+      135deg,
+      var(--red) 0 4px,
+      transparent 4px 8px
+    );
+    outline: 1px solid var(--red);
+  }
+
+  .tally-tick {
+    position: absolute;
+    top: -4px;
+    bottom: -4px;
+    width: 1px;
+    background: var(--text);
+    pointer-events: none;
+  }
+
+  .tally-tag {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--bstrong);
+    color: var(--muted);
+    font-size: 11px;
+    padding: 0 6px;
+    border-radius: 2px;
+    line-height: 18px;
+    white-space: nowrap;
+  }
+
+  .tally-sw {
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    flex-shrink: 0;
+    border-radius: 0;
+  }
+
+  .tally-row {
+    border-bottom: 1px dashed var(--border);
+  }
+
+  .tally-toast {
+    background: var(--panel);
+    border: 1px solid var(--bstrong);
+    border-left-width: 3px;
+    border-radius: 0;
+    padding: 12px 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .tally-toast-cd {
+    height: 2px;
+    background: var(--border);
+    margin-top: -1px;
+    overflow: hidden;
+  }
+
+  .tally-toast-cd > i,
+  .tally-toast-cd-bar {
+    display: block;
+    height: 2px;
+    background: var(--text);
+  }
+
+  .tally-sk {
+    background: var(--panel2);
+    border-radius: 0;
+    animation: tally-pulse 1.6s ease-in-out infinite;
+  }
+
+  .tally-cursor {
+    color: var(--accent);
+    animation: tally-blink 1.2s steps(1, end) infinite;
+  }
+
+  .tally-big {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .tally-cur {
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 16px;
+  }
+
+  .tally-sub {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 6px;
+  }
+
+  .tally-st-ok {
+    color: var(--muted);
+  }
+
+  .tally-st-warn {
+    color: var(--warn);
+  }
+
+  .tally-st-over {
+    color: var(--red);
+  }
+
+  .tally-mobile-nav {
+    position: fixed;
+    z-index: 40;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 2px;
+    padding: 4px 6px calc(4px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--border);
+    background: color-mix(in srgb, var(--bg) 96%, transparent);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+
+  .tally-mobile-nav-item {
+    display: flex;
+    min-width: 0;
+    min-height: 52px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 4px 2px 2px;
+    border: 1px solid transparent;
+    border-top: 2px solid transparent;
+    color: var(--muted);
+    background: transparent;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1.15;
+    white-space: nowrap;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .tally-mobile-nav-item.is-active {
+    border-top-color: var(--accent);
+    background: var(--panel);
+    color: var(--text);
+  }
+
+  .tally-dialog-content {
+    max-height: calc(100vh - 1rem);
+    max-height: calc(100dvh - 1rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 24px;
+    padding-top: 28px;
+  }
+
+  @media (max-width: 639px) {
+    .tally-dialog-content {
+      padding: 16px;
+      padding-top: 28px;
+    }
+  }
+}
+
+.tabular-nums,
+.tally-num {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tally-sk,
+  .tally-cursor {
+    animation: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .tally-pane {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .tally-big {
+    font-size: 22px;
+  }
+}
+
+@media (min-width: 768px) {
+  .tally-mobile-nav {
+    display: none;
+  }
+}

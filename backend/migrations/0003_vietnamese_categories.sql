@@ -1,0 +1,11 @@
+UPDATE categories SET name = 'Ăn uống' WHERE id = 'food';
+UPDATE categories SET name = 'Đi chợ & Siêu thị' WHERE id = 'groceries';
+UPDATE categories SET name = 'Di chuyển' WHERE id = 'transport';
+UPDATE categories SET name = 'Nhà ở' WHERE id = 'housing';
+UPDATE categories SET name = 'Hóa đơn & Tiện ích' WHERE id = 'utilities';
+UPDATE categories SET name = 'Sức khỏe' WHERE id = 'health';
+UPDATE categories SET name = 'Giải trí' WHERE id = 'entertainment';
+UPDATE categories SET name = 'Mua sắm' WHERE id = 'shopping';
+UPDATE categories SET name = 'Lương & Thu nhập' WHERE id = 'salary';
+UPDATE categories SET name = 'Khác' WHERE id = 'other';
+UPDATE categories SET name = 'Đăng ký định kỳ' WHERE id = 'subscriptions';
