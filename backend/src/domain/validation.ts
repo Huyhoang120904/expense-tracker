@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@hono/zod-openapi";
 import { sha256Hex } from "./crypto";
 import { badRequest } from "./errors";
 import type {
@@ -74,7 +74,8 @@ export const idempotencyKeySchema = z
 
 export const calendarDateSchema = z
   .string()
-  .refine(isValidCalendarDate, "Must be a valid calendar date in YYYY-MM-DD format.");
+  .refine(isValidCalendarDate, "Must be a valid calendar date in YYYY-MM-DD format.")
+  .openapi({ format: "date" });
 
 const amountMinorSchema = z
   .number()
@@ -166,7 +167,7 @@ export const batchTransactionsSchema: z.ZodType<BatchTransactionsInput> =
     }),
   ]);
 
-export const listTransactionsQuerySchema: z.ZodType<ListTransactionsQuery> =
+export const listTransactionsQuerySchema =
   z.strictObject({
     month: monthSchema.optional(),
     category_id: z
@@ -183,13 +184,19 @@ export const listTransactionsQuerySchema: z.ZodType<ListTransactionsQuery> =
         message: "Limit must be between 1 and 100.",
       })
       .optional()
-      .transform((value) => value ?? 50),
+      .transform((value) => value ?? 50)
+      .openapi({
+        type: "integer",
+        minimum: 1,
+        maximum: 100,
+        default: 50,
+      }),
     cursor: z
       .string()
       .min(1, "Cursor cannot be empty.")
       .max(1024, "Cursor is too long.")
       .optional(),
-  });
+  }) satisfies z.ZodType<ListTransactionsQuery>;
 
 export const summaryQuerySchema = z.strictObject({
   month: monthSchema,
