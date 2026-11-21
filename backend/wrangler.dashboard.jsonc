@@ -1,0 +1,21 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "expense-tracker-dashboard",
+  "main": "./src/workers/dashboard.ts",
+  "compatibility_date": "2026-11-19",
+  "observability": {
+    "enabled": true
+  },
+  "dev": {
+    "port": 8788,
+    "ip": "127.0.0.1"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "expense-tracker-local",
+      "database_id": "00000000-0000-0000-0000-000000000001",
+      "migrations_dir": "migrations"
+    }
+  ]
+}

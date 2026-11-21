@@ -4,9 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev --config wrangler.integration.jsonc",
+    "dev": "wrangler dev --config wrangler.integration.jsonc --persist-to ../.wrangler/state",
+    "dev:dashboard": "wrangler dev --config wrangler.dashboard.jsonc --port 8788 --persist-to ../.wrangler/state",
+    "db:migrate:local": "wrangler d1 migrations apply expense-tracker-local --local -y --config wrangler.integration.jsonc --persist-to ../.wrangler/state",
+    "db:setup:local": "node scripts/setup-local.mjs",
+    "db:seed:demo": "node scripts/seed-demo.mjs",
     "generate:types": "wrangler types --config wrangler.integration.jsonc",
-    "check": "npm run generate:types && tsc --noEmit"
+    "check": "npm run generate:types && tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "hono": "^4.11.0",
@@ -14,6 +19,7 @@
   },
   "devDependencies": {
     "typescript": "^5.9.3",
+    "vitest": "^3.2.4",
     "wrangler": "^4.129.1"
   }
 }
