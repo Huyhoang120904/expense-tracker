@@ -17,6 +17,60 @@
     }
   ],
   "paths": {
+    "/health": {
+      "get": {
+        "operationId": "getHealth",
+        "summary": "Health check",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Worker is healthy",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HealthStatus" },
+                "example": {
+                  "status": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/capabilities": {
+      "get": {
+        "operationId": "getCapabilities",
+        "summary": "Get dashboard session capabilities",
+        "servers": [
+          {
+            "url": "https://dashboard.example.com",
+            "description": "Dashboard Worker, behind Cloudflare Access"
+          }
+        ],
+        "security": [
+          {
+            "OwnerSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current session capabilities",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Capabilities" },
+                "example": {
+                  "mode": "owner",
+                  "can_write": true
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      }
+    },
     "/v1/categories": {
       "get": {
         "operationId": "listCategories",
@@ -149,6 +203,60 @@
           "400": { "$ref": "#/components/responses/BadRequest" },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "403": { "$ref": "#/components/responses/Forbidden" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      }
+    },
+    "/v1/transactions/batch": {
+      "post": {
+        "operationId": "batchTransactions",
+        "summary": "Batch update or delete active transactions",
+        "servers": [
+          {
+            "url": "https://dashboard.example.com",
+            "description": "Dashboard Worker, behind Cloudflare Access"
+          }
+        ],
+        "security": [
+          {
+            "OwnerSession": []
+          }
+        ],
+        "description": "Applies a single update patch or soft-delete across up to 100 transaction IDs in one atomic batch.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/BatchTransactionsRequest" },
+              "example": {
+                "action": "update",
+                "ids": ["txn_example_1", "txn_example_2"],
+                "patch": {
+                  "category_id": "food"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Batch operation summary",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BatchTransactionsResult" },
+                "example": {
+                  "action": "update",
+                  "requested": 2,
+                  "affected": 2
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "415": { "$ref": "#/components/responses/UnsupportedMediaType" },
+          "422": { "$ref": "#/components/responses/ValidationError" },
           "500": { "$ref": "#/components/responses/InternalError" }
         }
       }
@@ -509,6 +617,149 @@
       }
     },
     "schemas": {
+      "HealthStatus": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok"
+            ]
+          }
+        }
+      },
+      "Capabilities": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "mode",
+          "can_write"
+        ],
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "owner"
+            ]
+          },
+          "can_write": {
+            "type": "boolean"
+          }
+        }
+      },
+      "BatchUpdatePatch": {
+        "type": "object",
+        "additionalProperties": false,
+        "minProperties": 1,
+        "properties": {
+          "category_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "type": { "$ref": "#/components/schemas/TransactionType" },
+          "transaction_date": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "BatchDeleteTransactions": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "ids"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "const": "delete"
+          },
+          "ids": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 100,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            }
+          }
+        }
+      },
+      "BatchUpdateTransactions": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "ids",
+          "patch"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "const": "update"
+          },
+          "ids": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 100,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            }
+          },
+          "patch": { "$ref": "#/components/schemas/BatchUpdatePatch" }
+        }
+      },
+      "BatchTransactionsRequest": {
+        "oneOf": [
+          { "$ref": "#/components/schemas/BatchDeleteTransactions" },
+          { "$ref": "#/components/schemas/BatchUpdateTransactions" }
+        ],
+        "discriminator": {
+          "propertyName": "action",
+          "mapping": {
+            "delete": "#/components/schemas/BatchDeleteTransactions",
+            "update": "#/components/schemas/BatchUpdateTransactions"
+          }
+        }
+      },
+      "BatchTransactionsResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "requested",
+          "affected"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "delete",
+              "update"
+            ]
+          },
+          "requested": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "affected": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
       "TransactionType": {
         "type": "string",
         "enum": [
