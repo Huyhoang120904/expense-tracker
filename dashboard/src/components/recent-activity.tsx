@@ -98,7 +98,7 @@ export function RecentActivity({
         <div className="flex flex-1 flex-col">
           <div
             aria-hidden="true"
-            className="tally-row hidden min-h-[30px] items-center gap-3 text-[12px] text-[var(--muted)] sm:grid sm:grid-cols-[84px_minmax(0,1fr)_124px_112px]"
+            className="tally-row hidden min-h-[30px] items-center gap-3 text-[12px] text-[var(--muted)] lg:grid lg:grid-cols-[84px_minmax(0,1fr)_124px_112px]"
           >
             <span>ngày</span>
             <span>nơi chi</span>
@@ -141,14 +141,14 @@ export function RecentActivity({
                     type="button"
                     onClick={() => onSelectTransaction(tx.id)}
                     className={cn(
-                      "-mx-1.5 grid min-h-[42px] w-[calc(100%+12px)] cursor-pointer grid-cols-[84px_minmax(0,1fr)_auto] items-center gap-3 px-1.5 py-1.5 text-left transition-colors hover:bg-[var(--panel)] sm:grid-cols-[84px_minmax(0,1fr)_124px_112px]",
+                      "-mx-1.5 grid min-h-[42px] w-[calc(100%+12px)] cursor-pointer grid-cols-[84px_minmax(0,1fr)_auto] items-center gap-3 px-1.5 py-1.5 text-left transition-colors hover:bg-[var(--panel)] lg:grid-cols-[84px_minmax(0,1fr)_124px_112px]",
                     )}
                   >
                     <span className="whitespace-nowrap text-[var(--muted)] tally-num">
                       {formatLocalDate(tx.transaction_date, "full")}
                     </span>
 
-                    <span className="flex min-w-0 flex-col gap-0.5 sm:flex-row sm:items-center sm:gap-2">
+                    <span className="flex min-w-0 flex-col gap-0.5 lg:flex-row lg:items-center lg:gap-2">
                       <span className="flex min-w-0 items-center gap-2">
                         <span
                           title={fullMerchant}
@@ -162,14 +162,14 @@ export function RecentActivity({
                           </span>
                         ) : null}
                       </span>
-                      <span className="truncate text-[11px] text-[var(--muted)] sm:hidden">
+                      <span className="truncate text-[11px] text-[var(--muted)] lg:hidden">
                         {tx.category_id !== null
                           ? (category?.name ?? tx.category_id).toLowerCase()
                           : "— chưa phân loại"}
                       </span>
                     </span>
 
-                    <span className="hidden min-w-0 items-center gap-2 sm:flex">
+                    <span className="hidden min-w-0 items-center gap-2 lg:flex">
                       {tx.category_id !== null ? (
                         <>
                           <span

@@ -51,7 +51,7 @@ export function MonthPicker({ month, onChange, className }: MonthPickerProps) {
   return (
     <div
       className={cn(
-        "inline-flex h-10 items-stretch rounded-[2px] border border-[var(--bstrong)] bg-transparent text-[13px] text-[var(--text)]",
+        "inline-flex h-10 min-w-0 items-stretch rounded-[2px] border border-[var(--bstrong)] bg-transparent text-[13px] text-[var(--text)]",
         className,
       )}
     >
@@ -59,7 +59,7 @@ export function MonthPicker({ month, onChange, className }: MonthPickerProps) {
         type="button"
         aria-label="tháng trước"
         onClick={() => onChange(shiftMonth(month, -1))}
-        className="inline-flex w-9 items-center justify-center border-r border-[var(--border)] bg-transparent text-[var(--muted)] transition-colors hover:bg-[var(--panel2)] hover:text-[var(--text)] cursor-pointer"
+        className="inline-flex w-8 shrink-0 items-center justify-center border-r border-[var(--border)] bg-transparent text-[var(--muted)] transition-colors hover:bg-[var(--panel2)] hover:text-[var(--text)] cursor-pointer sm:w-9"
       >
         <span aria-hidden="true">&lt;</span>
       </button>
@@ -69,10 +69,10 @@ export function MonthPicker({ month, onChange, className }: MonthPickerProps) {
           <button
             type="button"
             aria-label={`chọn tháng, hiện tại là ${formatMonthLabel(month)}`}
-            className="inline-flex items-center gap-2 bg-transparent px-3.5 text-[13px] whitespace-nowrap text-[var(--text)] transition-colors hover:bg-[var(--panel2)] cursor-pointer"
+            className="inline-flex min-w-0 items-center gap-1.5 bg-transparent px-2.5 text-[12px] whitespace-nowrap text-[var(--text)] transition-colors hover:bg-[var(--panel2)] cursor-pointer sm:gap-2 sm:px-3.5 sm:text-[13px]"
           >
-            <span className="text-[var(--muted)]">khoảng</span>
-            <span className="tally-num">{formatDateRangeLabel(month)}</span>
+            <span className="hidden text-[var(--muted)] sm:inline">khoảng</span>
+            <span className="tally-num min-w-0 truncate">{formatDateRangeLabel(month)}</span>
             <span className="text-[var(--muted)]" aria-hidden="true">
               ▾
             </span>
@@ -81,7 +81,7 @@ export function MonthPicker({ month, onChange, className }: MonthPickerProps) {
 
         <PopoverContent
           align="start"
-          className="w-[268px] rounded-none border border-[var(--bstrong)] bg-[var(--bg)] p-3 text-[var(--text)]"
+          className="w-[min(268px,calc(100vw-1rem))] max-h-[calc(100dvh-1rem)] overflow-y-auto overscroll-contain rounded-none border border-[var(--bstrong)] bg-[var(--bg)] p-3 text-[var(--text)]"
         >
           <div className="mb-2.5 flex items-center justify-between border-b border-dashed border-[var(--border)] pb-2.5">
             <button
@@ -158,7 +158,7 @@ export function MonthPicker({ month, onChange, className }: MonthPickerProps) {
         type="button"
         aria-label="tháng sau"
         onClick={() => onChange(shiftMonth(month, 1))}
-        className="inline-flex w-9 items-center justify-center border-l border-[var(--border)] bg-transparent text-[var(--muted)] transition-colors hover:bg-[var(--panel2)] hover:text-[var(--text)] cursor-pointer"
+        className="inline-flex w-8 shrink-0 items-center justify-center border-l border-[var(--border)] bg-transparent text-[var(--muted)] transition-colors hover:bg-[var(--panel2)] hover:text-[var(--text)] cursor-pointer sm:w-9"
       >
         <span aria-hidden="true">&gt;</span>
       </button>

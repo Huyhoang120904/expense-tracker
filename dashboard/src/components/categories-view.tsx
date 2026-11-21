@@ -191,7 +191,7 @@ export function CategoriesView({
 
   return (
     <div className="space-y-8">
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Pane title="tổng ngân sách tháng">
           <div className="tally-big tally-num">
             {budgetOverview.hasBudgets ? (
@@ -412,7 +412,7 @@ export function CategoriesView({
                       </span>
                     </div>
 
-                    <div className="tally-num text-[12px] text-[var(--muted)]">
+                    <div className="tally-num min-w-0 max-w-full break-words text-[12px] text-[var(--muted)]">
                       {usage ? (
                         <span>
                           <span className="text-[var(--text)]">
@@ -432,7 +432,7 @@ export function CategoriesView({
                   </div>
 
                   {usage ? (
-                    <div className="grid grid-cols-1 items-center gap-2.5 sm:grid-cols-[minmax(0,1fr)_220px] sm:gap-3.5">
+                    <div className="grid grid-cols-1 items-center gap-2.5 lg:grid-cols-[minmax(0,1fr)_220px] lg:gap-3.5">
                       <div
                         className="tally-bar"
                         role="progressbar"
@@ -461,7 +461,7 @@ export function CategoriesView({
 
                       <span
                         className={cn(
-                          "tally-num text-[12px] sm:text-right",
+                          "tally-num text-[12px] lg:text-right",
                           usage.status === "over"
                             ? "tally-st-over"
                             : usage.status === "warn"
@@ -509,7 +509,7 @@ export function CategoriesView({
                         }}
                         placeholder="hạn mức (vd: 4tr, 800k)"
                         className={cn(
-                          "tally-num h-[30px] w-[190px] rounded-[2px] border bg-transparent px-2 text-[12px] text-[var(--text)] placeholder:text-[var(--muted)] hover:border-[var(--bstrong)] focus-visible:border-[var(--blue)]",
+                          "tally-num h-[30px] w-full max-w-[190px] rounded-[2px] border bg-transparent px-2 text-[12px] text-[var(--text)] placeholder:text-[var(--muted)] hover:border-[var(--bstrong)] focus-visible:border-[var(--blue)] sm:w-[190px]",
                           rowError
                             ? "border-[var(--red)]"
                             : "border-[var(--border)]",

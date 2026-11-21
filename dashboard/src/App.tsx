@@ -1,7 +1,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useIsFetching, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "motion/react";
-import { Moon, RefreshCw, Sun } from "lucide-react";
+import {
+  BarChart3,
+  Home,
+  List,
+  Moon,
+  PiggyBank,
+  Plus,
+  RefreshCw,
+  Search,
+  Settings,
+  Sun,
+  Wallet,
+  type LucideIcon,
+} from "lucide-react";
 import { CategoriesView } from "@/components/categories-view";
 import { CommandPaletteDialog } from "@/components/command-palette-dialog";
 import { LedgerView } from "@/components/ledger-view";
@@ -46,13 +59,45 @@ interface ToastItem {
 const NAV_ITEMS: Array<{
   id: NavView;
   label: string;
+  mobileLabel: string;
   kbd: string;
+  icon: LucideIcon;
 }> = [
-  { id: "overview", label: "bảng điều khiển", kbd: "d" },
-  { id: "ledger", label: "giao dịch", kbd: "t" },
-  { id: "budgets", label: "ngân sách", kbd: "b" },
-  { id: "reports", label: "báo cáo", kbd: "r" },
-  { id: "settings", label: "cài đặt", kbd: "s" },
+  {
+    id: "overview",
+    label: "bảng điều khiển",
+    mobileLabel: "tổng quan",
+    kbd: "d",
+    icon: Home,
+  },
+  {
+    id: "ledger",
+    label: "giao dịch",
+    mobileLabel: "giao dịch",
+    kbd: "t",
+    icon: List,
+  },
+  {
+    id: "budgets",
+    label: "ngân sách",
+    mobileLabel: "ngân sách",
+    kbd: "b",
+    icon: PiggyBank,
+  },
+  {
+    id: "reports",
+    label: "báo cáo",
+    mobileLabel: "báo cáo",
+    kbd: "r",
+    icon: BarChart3,
+  },
+  {
+    id: "settings",
+    label: "cài đặt",
+    mobileLabel: "cài đặt",
+    kbd: "s",
+    icon: Settings,
+  },
 ];
 
 const TOAST_DURATION_MS = 5000;
@@ -126,7 +171,7 @@ function TallyToast({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 8 }}
       transition={{ duration: 0.14 }}
-      className="fixed right-4 bottom-4 z-50 w-[min(420px,calc(100vw-2rem))] sm:right-6 sm:bottom-6"
+      className="fixed right-4 bottom-[calc(60px+env(safe-area-inset-bottom)+1rem)] z-50 w-[min(420px,calc(100vw-2rem))] md:right-6 md:bottom-6"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
@@ -449,15 +494,15 @@ export default function App() {
     budgetOverview.warnItems.length - warnBannerParts.length;
 
   return (
-    <div className="flex min-h-screen flex-col bg-[var(--bg)] text-[var(--text)] md:flex-row">
-      <aside className="flex flex-col justify-between gap-6 border-b border-[var(--border)] bg-[var(--bg)] px-4 py-5 md:sticky md:top-0 md:h-screen md:w-[232px] md:shrink-0 md:border-r md:border-b-0">
-        <div className="flex flex-col gap-4 md:gap-7">
+    <div className="flex min-h-screen flex-col bg-[var(--bg)] pb-[calc(60px+env(safe-area-inset-bottom))] text-[var(--text)] md:flex-row md:pb-0">
+      <aside className="flex flex-col justify-between gap-6 border-b border-[var(--border)] bg-[var(--bg)] px-4 py-2 md:sticky md:top-0 md:h-screen md:w-[232px] md:shrink-0 md:border-r md:border-b-0 md:py-5">
+        <div className="flex flex-col gap-2 md:gap-7">
           <div className="flex items-center justify-between gap-3">
             <button
               type="button"
               onClick={() => setActiveView("overview")}
               aria-label={`${APP_NAME} – Bảng điều khiển`}
-              className="inline-flex cursor-pointer items-center gap-2 px-2.5 text-left text-[18px] font-semibold tracking-[-0.01em] text-[var(--text)]"
+              className="inline-flex cursor-pointer items-center gap-2 px-2.5 text-left text-[16px] font-semibold tracking-[-0.01em] whitespace-nowrap text-[var(--text)]"
             >
               <img
                 src={appIconUrl}
@@ -517,7 +562,7 @@ export default function App() {
 
           <nav
             aria-label="Menu chính"
-            className="flex flex-row flex-wrap gap-1 md:flex-col md:gap-0.5"
+            className="hidden flex-col gap-0.5 md:flex"
           >
             {NAV_ITEMS.map((item) => {
               const isActive = activeView === item.id;
@@ -595,29 +640,60 @@ export default function App() {
         </div>
       </aside>
 
+      <nav className="tally-mobile-nav md:hidden" aria-label="Điều hướng chính">
+        {NAV_ITEMS.map((item) => {
+          const isActive = activeView === item.id;
+          const Icon = item.icon;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              aria-label={item.mobileLabel}
+              aria-current={isActive ? "page" : undefined}
+              onClick={() => setActiveView(item.id)}
+              className={cn(
+                "tally-mobile-nav-item",
+                isActive && "is-active",
+              )}
+            >
+              <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
+              <span>{item.mobileLabel}</span>
+            </button>
+          );
+        })}
+      </nav>
+
       <main className="flex min-w-0 flex-1 flex-col">
-        <header className="z-10 flex flex-wrap items-center justify-between gap-3 border-b border-[var(--border)] bg-[var(--bg)] px-4 py-4 sm:px-7 md:sticky md:top-0">
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="whitespace-nowrap text-[15px] font-semibold lowercase tracking-[-0.01em] text-[var(--text)]">
+        <header className="z-10 flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border)] bg-[var(--bg)] px-3 py-2.5 sm:px-7 md:sticky md:top-0 md:gap-3 md:py-4">
+          <div className="flex w-full items-center gap-3 md:w-auto md:flex-wrap">
+            <h1 className="sr-only whitespace-nowrap text-[15px] font-semibold lowercase tracking-[-0.01em] text-[var(--text)] md:not-sr-only">
               {activeNavLabel}
             </h1>
-            <MonthPicker month={month} onChange={setMonth} />
+            <MonthPicker
+              month={month}
+              onChange={setMonth}
+              className="max-md:w-full max-md:justify-between"
+            />
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex w-full min-w-0 items-center gap-1.5 md:w-auto md:flex-wrap md:gap-2">
             <button
               type="button"
               onClick={() => openCommandPalette("")}
               aria-label="tìm kiếm hoặc chạy lệnh (phím tắt ⌘K)"
-              className="tally-search w-full cursor-pointer text-left transition-colors hover:bg-[var(--panel)] sm:w-[200px] 2xl:w-[260px]"
+              className="tally-search min-w-0 flex-1 cursor-pointer text-left transition-colors hover:bg-[var(--panel)] md:w-[200px] md:flex-none 2xl:w-[260px]"
             >
-              <span className="text-[var(--muted)]" aria-hidden="true">
+              <span className="text-[var(--muted)] md:hidden" aria-hidden="true">
+                <Search className="h-4 w-4" />
+              </span>
+              <span className="hidden text-[var(--muted)] md:inline" aria-hidden="true">
                 /
               </span>
               <span className="min-w-0 flex-1 truncate text-[var(--muted)]">
-                tìm kiếm hoặc chạy lệnh
+                <span className="lg:hidden">tìm kiếm</span>
+                <span className="hidden lg:inline">tìm kiếm hoặc chạy lệnh</span>
               </span>
-              <span className="tally-kbd shrink-0" aria-hidden="true">
+              <span className="tally-kbd hidden shrink-0 lg:inline-flex" aria-hidden="true">
                 ⌘K
               </span>
             </button>
@@ -625,7 +701,7 @@ export default function App() {
             <button
               type="button"
               onClick={handleToggleTheme}
-              className="tally-btn gap-2 px-3 2xl:gap-2.5 2xl:px-3.5"
+              className="tally-btn h-10 w-10 shrink-0 px-0 lg:w-auto lg:gap-2 lg:px-3 2xl:gap-2.5 2xl:px-3.5"
               aria-label={
                 theme === "dark"
                   ? "chuyển sang giao diện sáng (phím tắt l)"
@@ -642,7 +718,9 @@ export default function App() {
               ) : (
                 <Moon className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
               )}
-              <span>{theme === "dark" ? "sáng" : "tối"}</span>
+              <span className="hidden lg:inline">
+                {theme === "dark" ? "sáng" : "tối"}
+              </span>
               <span
                 className="tally-kbd hidden 2xl:inline-flex"
                 aria-hidden="true"
@@ -656,9 +734,12 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => setIncomeDialogOpen(true)}
-                  className="tally-btn gap-2 px-3 2xl:gap-2.5 2xl:px-3.5"
+                  aria-label="đặt thu nhập tháng"
+                  title="đặt thu nhập tháng"
+                  className="tally-btn h-10 w-10 shrink-0 px-0 lg:w-auto lg:gap-2 lg:px-3 2xl:gap-2.5 2xl:px-3.5"
                 >
-                  <span>thu nhập</span>
+                  <Wallet className="h-4 w-4 shrink-0" aria-hidden="true" />
+                  <span className="hidden lg:inline">thu nhập</span>
                   <span
                     className="tally-kbd hidden 2xl:inline-flex"
                     aria-hidden="true"
@@ -670,10 +751,13 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => openQuickAdd("expense")}
-                  className="tally-btn tally-btn-primary gap-2 px-3 2xl:gap-2.5 2xl:px-3.5"
+                  aria-label="thêm khoản chi"
+                  title="thêm khoản chi"
+                  className="tally-btn tally-btn-primary h-10 w-10 shrink-0 px-0 lg:w-auto lg:gap-2 lg:px-3 2xl:gap-2.5 2xl:px-3.5"
                 >
-                  <span>+ thêm khoản chi</span>
-                  <span className="tally-kbd" aria-hidden="true">
+                  <Plus className="h-4 w-4 shrink-0" aria-hidden="true" />
+                  <span className="hidden lg:inline">thêm khoản chi</span>
+                  <span className="tally-kbd hidden 2xl:inline-flex" aria-hidden="true">
                     n
                   </span>
                 </button>

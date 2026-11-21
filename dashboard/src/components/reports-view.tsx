@@ -185,7 +185,7 @@ export function ReportsView({
 
   return (
     <div className="space-y-8">
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Pane title="tổng chi 6 tháng">
           {multiMonth.isLoading && loadedItems.length === 0 ? (
             <div className="space-y-2.5">
@@ -492,7 +492,7 @@ export function ReportsView({
       <Pane title="bảng tổng hợp theo tháng">
         <div
           aria-hidden="true"
-          className="tally-row hidden min-h-[32px] grid-cols-[130px_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_110px] items-center gap-3 border-l-2 border-l-transparent px-3 text-[12px] text-[var(--muted)] sm:grid"
+          className="tally-row hidden min-h-[32px] grid-cols-[130px_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_110px] items-center gap-3 border-l-2 border-l-transparent px-3 text-[12px] text-[var(--muted)] lg:grid"
         >
           <span>tháng</span>
           <span className="text-right">thu nhập</span>
@@ -517,7 +517,7 @@ export function ReportsView({
                   onClick={() => onMonthChange(item.month)}
                   aria-current={isSelected ? "true" : undefined}
                   className={cn(
-                    "grid w-full grid-cols-1 gap-1.5 border-l-2 px-3 py-2.5 text-left transition-colors hover:bg-[var(--panel)] sm:grid-cols-[130px_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_110px] sm:items-center sm:gap-3 cursor-pointer",
+                    "grid w-full grid-cols-1 gap-1.5 border-l-2 px-3 py-2.5 text-left transition-colors hover:bg-[var(--panel)] lg:grid-cols-[130px_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_110px] lg:items-center lg:gap-3 cursor-pointer",
                     isSelected
                       ? "border-l-[var(--accent)] bg-[var(--panel)]"
                       : "border-l-transparent",
@@ -535,11 +535,11 @@ export function ReportsView({
                   </span>
 
                   {item.isLoading && !s ? (
-                    <div className="tally-sk h-[14px] w-full sm:col-span-4" />
+                    <div className="tally-sk h-[14px] w-full lg:col-span-4" />
                   ) : s ? (
                     <>
-                      <div className="tally-num flex items-center justify-between text-[13px] sm:block sm:text-right">
-                        <span className="text-[11px] text-[var(--muted)] sm:hidden">
+                      <div className="tally-num flex items-center justify-between text-[13px] lg:block lg:text-right">
+                        <span className="text-[11px] text-[var(--muted)] lg:hidden">
                           thu nhập
                         </span>
                         <span
@@ -553,8 +553,8 @@ export function ReportsView({
                         </span>
                       </div>
 
-                      <div className="tally-num flex items-center justify-between text-[13px] sm:block sm:text-right">
-                        <span className="text-[11px] text-[var(--muted)] sm:hidden">
+                      <div className="tally-num flex items-center justify-between text-[13px] lg:block lg:text-right">
+                        <span className="text-[11px] text-[var(--muted)] lg:hidden">
                           chi tiêu ròng
                         </span>
                         <span className="text-[var(--text)]">
@@ -562,8 +562,8 @@ export function ReportsView({
                         </span>
                       </div>
 
-                      <div className="tally-num flex items-center justify-between text-[13px] sm:block sm:text-right">
-                        <span className="text-[11px] text-[var(--muted)] sm:hidden">
+                      <div className="tally-num flex items-center justify-between text-[13px] lg:block lg:text-right">
+                        <span className="text-[11px] text-[var(--muted)] lg:hidden">
                           còn lại
                         </span>
                         <span
@@ -581,8 +581,8 @@ export function ReportsView({
                         </span>
                       </div>
 
-                      <div className="tally-num flex items-center justify-between text-[12px] sm:block sm:text-right">
-                        <span className="text-[11px] text-[var(--muted)] sm:hidden">
+                      <div className="tally-num flex items-center justify-between text-[12px] lg:block lg:text-right">
+                        <span className="text-[11px] text-[var(--muted)] lg:hidden">
                           tỷ lệ giữ lại
                         </span>
                         {retentionRatio !== null ? (
@@ -601,7 +601,7 @@ export function ReportsView({
                       </div>
                     </>
                   ) : (
-                    <span className="text-[12px] text-[var(--muted)] sm:col-span-4 sm:text-right">
+                    <span className="text-[12px] text-[var(--muted)] lg:col-span-4 lg:text-right">
                       không có dữ liệu
                     </span>
                   )}
@@ -647,7 +647,7 @@ export function ReportsView({
           <div>
             <div
               aria-hidden="true"
-              className="tally-row hidden min-h-[32px] grid-cols-[minmax(0,1.4fr)_124px_116px_130px_76px] items-center gap-3 px-2 text-[12px] text-[var(--muted)] md:grid"
+              className="tally-row hidden min-h-[32px] grid-cols-[minmax(0,1.4fr)_124px_116px_130px_76px] items-center gap-3 px-2 text-[12px] text-[var(--muted)] lg:grid"
             >
               <span>danh mục</span>
               <span className="text-right">chi gộp</span>
@@ -703,15 +703,15 @@ export function ReportsView({
                       ) : null}
                     </div>
 
-                    <div className="tally-num flex items-center justify-between text-[12px] text-[var(--muted)] md:block md:text-right">
-                      <span className="md:hidden">chi gộp</span>
+                    <div className="tally-num flex items-center justify-between text-[12px] text-[var(--muted)] lg:block lg:text-right">
+                      <span className="lg:hidden">chi gộp</span>
                       <span>
                         {formatMoney(row.gross_expenses_minor, currency)}
                       </span>
                     </div>
 
-                    <div className="tally-num flex items-center justify-between text-[12px] md:block md:text-right">
-                      <span className="text-[var(--muted)] md:hidden">
+                    <div className="tally-num flex items-center justify-between text-[12px] lg:block lg:text-right">
+                      <span className="text-[var(--muted)] lg:hidden">
                         hoàn tiền
                       </span>
                       {row.refunds_minor > 0 ? (
@@ -723,8 +723,8 @@ export function ReportsView({
                       )}
                     </div>
 
-                    <div className="tally-num flex items-center justify-between text-[13px] md:block md:text-right">
-                      <span className="text-[12px] text-[var(--muted)] md:hidden">
+                    <div className="tally-num flex items-center justify-between text-[13px] lg:block lg:text-right">
+                      <span className="text-[12px] text-[var(--muted)] lg:hidden">
                         chi ròng
                       </span>
                       <span className="text-[var(--text)]">
@@ -732,8 +732,8 @@ export function ReportsView({
                       </span>
                     </div>
 
-                    <div className="tally-num flex items-center justify-between text-[12px] text-[var(--muted)] md:block md:text-right">
-                      <span className="md:hidden">tỷ trọng</span>
+                    <div className="tally-num flex items-center justify-between text-[12px] text-[var(--muted)] lg:block lg:text-right">
+                      <span className="lg:hidden">tỷ trọng</span>
                       <span className="text-[var(--text)]">
                         {formatPercentVi(shareRatio, 1)}
                       </span>
@@ -750,12 +750,12 @@ export function ReportsView({
                       <button
                         type="button"
                         onClick={() => onBrowseCategory(row.category_id!)}
-                        className="grid w-full grid-cols-1 gap-1.5 px-2 py-2.5 text-left transition-colors hover:bg-[var(--panel)] md:grid-cols-[minmax(0,1.4fr)_124px_116px_130px_76px] md:items-center md:gap-3 cursor-pointer"
+                        className="grid w-full grid-cols-1 gap-1.5 px-2 py-2.5 text-left transition-colors hover:bg-[var(--panel)] lg:grid-cols-[minmax(0,1.4fr)_124px_116px_130px_76px] lg:items-center lg:gap-3 cursor-pointer"
                       >
                         {content}
                       </button>
                     ) : (
-                      <div className="grid w-full grid-cols-1 gap-1.5 px-2 py-2.5 text-left md:grid-cols-[minmax(0,1.4fr)_124px_116px_130px_76px] md:items-center md:gap-3">
+                      <div className="grid w-full grid-cols-1 gap-1.5 px-2 py-2.5 text-left lg:grid-cols-[minmax(0,1.4fr)_124px_116px_130px_76px] lg:items-center lg:gap-3">
                         {content}
                       </div>
                     )}

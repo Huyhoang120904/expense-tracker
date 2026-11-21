@@ -87,7 +87,7 @@ export function SummaryMetrics({
     return (
       <section
         aria-label="Tổng hợp tháng đã chọn"
-        className="grid grid-cols-1 gap-4 sm:grid-cols-3"
+        className="grid grid-cols-1 gap-4 lg:grid-cols-3"
       >
         <Pane title="thu nhập" as="div" className="pt-5 pb-3.5">
           <div className="flex items-baseline justify-between gap-3">

@@ -20,7 +20,7 @@ export function PopoverContent({
         align={align}
         sideOffset={sideOffset}
         className={cn(
-          "z-50 rounded-none border border-[var(--bstrong)] bg-[var(--panel)] p-3 text-[var(--text)] outline-none",
+          "z-50 max-h-[calc(100dvh-1rem)] overflow-y-auto overscroll-contain rounded-none border border-[var(--bstrong)] bg-[var(--panel)] p-3 text-[var(--text)] outline-none",
           className,
         )}
         {...props}

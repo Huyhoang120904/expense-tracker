@@ -43,7 +43,7 @@ export function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 w-[min(600px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-none border border-[var(--bstrong)] bg-[var(--bg)] p-6 pt-7 text-[var(--text)] focus:outline-none",
+          "tally-dialog-content fixed top-1/2 left-1/2 z-50 w-[min(600px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-none border border-[var(--bstrong)] bg-[var(--bg)] text-[var(--text)] focus:outline-none",
           className,
         )}
         {...props}
@@ -51,7 +51,7 @@ export function DialogContent({
         {floatingTitle ? (
           <DialogPrimitive.Title
             data-slot="dialog-floating-title"
-            className="tally-pt left-[14px]"
+            className="tally-pt top-2 left-[14px] bg-[var(--bg)] px-1"
           >
             {floatingTitle}
           </DialogPrimitive.Title>

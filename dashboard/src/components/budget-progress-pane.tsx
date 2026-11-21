@@ -94,7 +94,7 @@ export function BudgetProgressPane({
                     onClick={() => onSelectCategory(item.categoryId)}
                     className="-mx-1.5 grid w-[calc(100%+12px)] cursor-pointer gap-2 px-1.5 py-2.5 text-left transition-colors hover:bg-[var(--panel)]"
                   >
-                    <div className="flex items-center justify-between gap-3">
+                    <div className="flex min-w-0 flex-wrap items-center justify-between gap-x-3 gap-y-1">
                       <span className="inline-flex min-w-0 items-center gap-2">
                         <span
                           className="tally-sw"
@@ -105,13 +105,13 @@ export function BudgetProgressPane({
                           {item.categoryName.toLowerCase()}
                         </span>
                       </span>
-                      <span className="whitespace-nowrap text-[var(--muted)] tally-num">
+                      <span className="min-w-0 max-w-full break-words whitespace-normal text-[var(--muted)] tally-num">
                         {formatAmountNumber(item.spentMinor, currencyCode)} /{" "}
                         {formatMoney(item.budgetMinor, currencyCode)}
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-1 items-center gap-2 sm:grid-cols-[minmax(0,1fr)_190px] sm:gap-3.5">
+                    <div className="grid grid-cols-1 items-center gap-2 lg:grid-cols-[minmax(0,1fr)_190px] lg:gap-3.5">
                       <div
                         className="tally-bar"
                         role="progressbar"

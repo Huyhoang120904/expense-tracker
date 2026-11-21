@@ -663,15 +663,15 @@ export function LedgerView({
               {Array.from({ length: 6 }).map((_, idx) => (
                 <div
                   key={idx}
-                  className="tally-row grid grid-cols-[88px_minmax(0,1fr)_110px] items-center gap-3 py-3 md:grid-cols-[96px_minmax(0,1.4fr)_minmax(140px,0.9fr)_120px_136px]"
+                  className="tally-row grid grid-cols-[88px_minmax(0,1fr)_110px] items-center gap-3 py-3 lg:grid-cols-[96px_minmax(0,1.4fr)_minmax(140px,0.9fr)_120px_136px]"
                 >
                   <div className="tally-sk h-[14px] w-16" />
                   <div className="space-y-1.5">
                     <div className="tally-sk h-[14px] w-3/4" />
                     <div className="tally-sk h-[12px] w-1/2" />
                   </div>
-                  <div className="tally-sk hidden h-[14px] w-24 md:block" />
-                  <div className="tally-sk hidden h-[14px] w-20 md:block" />
+                  <div className="tally-sk hidden h-[14px] w-24 lg:block" />
+                  <div className="tally-sk hidden h-[14px] w-20 lg:block" />
                   <div className="tally-sk ml-auto h-[14px] w-20" />
                 </div>
               ))}
@@ -1054,7 +1054,7 @@ export function LedgerView({
               ) : null}
 
               {canWrite ? (
-                <div className="tally-row flex items-center justify-between px-1 py-2 text-[12px] text-[var(--muted)] md:hidden">
+                <div className="tally-row flex items-center justify-between px-1 py-2 text-[12px] text-[var(--muted)] lg:hidden">
                   <label className="flex cursor-pointer items-center gap-2">
                     <input
                       type="checkbox"
@@ -1072,7 +1072,7 @@ export function LedgerView({
                 </div>
               ) : null}
 
-              <div className="tally-row hidden min-h-[32px] items-center text-[12px] text-[var(--muted)] md:flex">
+              <div className="tally-row hidden min-h-[32px] items-center text-[12px] text-[var(--muted)] lg:flex">
                 {canWrite ? (
                   <label
                     className="flex w-9 shrink-0 cursor-pointer items-center justify-center pl-1"
@@ -1166,13 +1166,13 @@ export function LedgerView({
                       <button
                         type="button"
                         onClick={() => onSelectTransaction(tx.id)}
-                        className="grid min-w-0 flex-1 grid-cols-1 gap-1.5 px-2 py-2.5 text-left transition-colors hover:bg-[var(--panel)] focus-visible:bg-[var(--panel)] md:grid-cols-[96px_minmax(0,1.4fr)_minmax(140px,0.9fr)_124px_136px] md:items-center md:gap-3 cursor-pointer"
+                        className="grid min-w-0 flex-1 grid-cols-1 gap-1.5 px-2 py-2.5 text-left transition-colors hover:bg-[var(--panel)] focus-visible:bg-[var(--panel)] lg:grid-cols-[96px_minmax(0,1.4fr)_minmax(140px,0.9fr)_124px_136px] lg:items-center lg:gap-3 cursor-pointer"
                       >
-                        <div className="flex items-center justify-between gap-2 md:block">
+                        <div className="flex items-center justify-between gap-2 lg:block">
                           <span className="tally-num text-[12px] text-[var(--muted)]">
                             {formatLocalDate(tx.transaction_date, "full")}
                           </span>
-                          <span className="tally-num whitespace-nowrap text-[13px] md:hidden">
+                          <span className="tally-num whitespace-nowrap text-[13px] lg:hidden">
                             {formattedAmountNode}
                           </span>
                         </div>
@@ -1206,7 +1206,7 @@ export function LedgerView({
                           ) : null}
                         </div>
 
-                        <div className="flex min-w-0 items-center justify-between gap-2 md:justify-start">
+                        <div className="flex min-w-0 items-center justify-between gap-2 lg:justify-start">
                           {tx.category_id !== null ? (
                             <span className="flex min-w-0 items-center gap-2">
                               <span
@@ -1234,18 +1234,18 @@ export function LedgerView({
                             </span>
                           )}
 
-                          <span className="tally-tag shrink-0 md:hidden">
+                          <span className="tally-tag shrink-0 lg:hidden">
                             {TRANSACTION_SOURCE_LABELS[tx.source]}
                           </span>
                         </div>
 
-                        <div className="hidden md:flex md:items-center">
+                        <div className="hidden lg:flex lg:items-center">
                           <span className="tally-tag">
                             {TRANSACTION_SOURCE_LABELS[tx.source]}
                           </span>
                         </div>
 
-                        <div className="tally-num hidden whitespace-nowrap text-right text-[13px] md:block">
+                        <div className="tally-num hidden whitespace-nowrap text-right text-[13px] lg:block">
                           {formattedAmountNode}
                         </div>
                       </button>

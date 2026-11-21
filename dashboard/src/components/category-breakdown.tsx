@@ -122,7 +122,7 @@ export function CategoryBreakdown({
                 <button
                   type="button"
                   onClick={() => onSelectCategory(item.category_id)}
-                  className="-mx-1.5 grid min-h-[34px] w-[calc(100%+12px)] cursor-pointer grid-cols-[10px_minmax(0,1fr)_auto_52px] items-center gap-2.5 px-1.5 text-left transition-colors hover:bg-[var(--panel)]"
+                  className="-mx-1.5 grid min-h-[34px] w-[calc(100%+12px)] cursor-pointer grid-cols-[10px_minmax(0,1fr)_minmax(0,auto)_52px] items-center gap-2.5 px-1.5 text-left transition-colors hover:bg-[var(--panel)]"
                 >
                   <span
                     className="tally-sw"
@@ -135,7 +135,7 @@ export function CategoryBreakdown({
                       <span className="tally-tag">lưu trữ</span>
                     ) : null}
                   </span>
-                  <span className="whitespace-nowrap text-[var(--muted)] tally-num">
+                  <span className="min-w-0 max-w-full break-words whitespace-normal text-[var(--muted)] tally-num">
                     {formatMoney(item.net_spending_minor, currency)}
                   </span>
                   <span className="text-right text-[var(--text)] tally-num">
