@@ -4,6 +4,31 @@ import react from "@vitejs/plugin-react";
 import { defineConfig, loadEnv, type Plugin } from "vite";
 import { createApiProxyHandler } from "./server/proxy.mjs";
 
+function socialMetadataPlugin(publicOrigin?: string): Plugin {
+  const publicUrl = publicOrigin ? new URL(publicOrigin) : undefined;
+  if (publicUrl && !["http:", "https:"].includes(publicUrl.protocol)) {
+    throw new Error("DASHBOARD_PUBLIC_ORIGIN must use HTTP or HTTPS.");
+  }
+
+  const imagePath = "/so-thu-chi-og.png";
+  const imageUrl = publicUrl ? `${publicUrl.origin}${imagePath}` : imagePath;
+
+  return {
+    name: "social-metadata",
+    transformIndexHtml: {
+      order: "pre",
+      handler(html) {
+        return {
+          html: html.replace("%DASHBOARD_OG_IMAGE_URL%", imageUrl),
+          tags: publicUrl
+            ? [{ tag: "meta", attrs: { property: "og:url", content: `${publicUrl.origin}/` } }]
+            : [],
+        };
+      },
+    },
+  };
+}
+
 function localApiProxyPlugin(options: {
   apiUrl: string;
   readKey: string;
@@ -34,6 +59,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       tailwindcss(),
+      socialMetadataPlugin(env.DASHBOARD_PUBLIC_ORIGIN),
       localApiProxyPlugin({
         apiUrl: env.EXPENSE_TRACKER_API_URL || "http://127.0.0.1:8787",
         readKey: env.EXPENSE_TRACKER_READ_KEY || "",
