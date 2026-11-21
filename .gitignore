@@ -1,6 +1,7 @@
 node_modules/
 .wrangler/
 .wrangler-config/
+backend/wrangler.production.jsonc
 .vite/
 dist/
 .dev.vars

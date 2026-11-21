@@ -163,20 +163,27 @@ export class AuthService {
     ];
 
     let header: { alg?: string; kid?: string };
+    let signature: Uint8Array<ArrayBuffer>;
     let payload: {
       aud?: string | string[];
       email?: string;
       exp?: number;
+      iss?: string;
       nbf?: number;
     };
     try {
       header = decodeBase64UrlJson(headerB64);
       payload = decodeBase64UrlJson(payloadB64);
+      signature = decodeBase64UrlToUint8Array(signatureB64);
     } catch {
       throw unauthorized("A valid owner session is required.");
     }
 
-    if (header.alg !== "RS256" || !header.kid) {
+    if (
+      header?.alg !== "RS256" ||
+      !header.kid ||
+      payload?.iss !== `https://${teamDomain}`
+    ) {
       throw unauthorized("A valid owner session is required.");
     }
 
@@ -197,7 +204,6 @@ export class AuthService {
     const rawSigning = new TextEncoder().encode(`${headerB64}.${payloadB64}`);
     const signingInput = new Uint8Array(new ArrayBuffer(rawSigning.byteLength));
     signingInput.set(rawSigning);
-    const signature = decodeBase64UrlToUint8Array(signatureB64);
     const isValidSignature = await crypto.subtle.verify(
       "RSASSA-PKCS1-v1_5",
       cryptoKey,
