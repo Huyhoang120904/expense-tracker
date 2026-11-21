@@ -1,11 +1,42 @@
 <!doctype html>
-<html lang="en">
+<html lang="vi">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f4f6f3" />
-    <meta name="description" content="A clear view of your personal spending." />
-    <title>Expense tracker</title>
+    <meta name="theme-color" content="#0a0a0a" />
+    <meta
+      name="description"
+      content="Theo dõi thu chi cá nhân rõ ràng và riêng tư."
+    />
+    <title>tally – bảng điều khiển</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (function () {
+        var theme = "dark";
+        try {
+          var saved = window.localStorage.getItem("tally.theme");
+          if (saved === "light" || saved === "dark") {
+            theme = saved;
+          }
+        } catch (e) {}
+        var root = document.documentElement;
+        root.dataset.theme = theme;
+        root.classList.toggle("dark", theme === "dark");
+        root.style.colorScheme = theme;
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) {
+          meta.setAttribute(
+            "content",
+            theme === "light" ? "#fbfaf8" : "#0a0a0a",
+          );
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
